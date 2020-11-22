@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# generate random hostname (root cron)
+# generate random hostname ($USER cron w/ sudo)
 
 
 # generate random number between 0 and 9
@@ -53,11 +53,12 @@ fi
 hngen=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
 
 # merge prefix and hostname
-hn="$prefix-$hngen"
-# echo $hn
+hn="${prefix}-${hngen}"
+echo $hn
 
 # set hostname
-hostnamectl set-hostname $hn
+sudo hostnamectl set-hostname $hn
 
 # set hostname in hosts to avoid hostname-error requiring logout
-sed -i "1 s/^.*$/127.0.0.1    localhost $hn/" /etc/hosts
+sudo sed -i '1d' /etc/hosts
+sudo sed -i "1i 127.0.0.1    localhost $hn" /etc/hosts
